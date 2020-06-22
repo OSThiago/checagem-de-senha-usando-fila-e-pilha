@@ -1,0 +1,139 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+struct tChar {
+	char caracter;
+	struct tChar *prox;
+};
+
+struct tDescritorLilo {
+	struct tChar *ini;
+	struct tChar *fim;
+};
+
+// Declarações de funções
+void inicializarLilo(struct tDescritorLilo *fila);
+void inicializarFilo(struct tChar **topo);
+void enque(struct tDescritorLilo *descritor, struct tChar *novo);
+void listar(struct tDescritorLilo fila);
+void push(struct tChar **topo, struct tChar *novo);
+int permitido(struct tDescritorLilo fila, struct tChar *pilha);
+
+
+//************************* PROVA ***************************************
+int permitido(struct tDescritorLilo fila, struct tChar *pilha) {
+	struct tChar *f2 , *topo = pilha, *no; //pilha
+
+	inicializarFilo(&f2); //pilha
+// empilha
+	while(topo != NULL) {
+		no = malloc(sizeof(struct tChar));
+		no->caracter = topo->caracter;
+		push(&f2, no);
+		topo = topo->prox;
+	}
+	
+// comparar
+	while(f2 != NULL) {
+		if(f2->caracter != fila.ini->caracter) {
+			return 0;
+		}
+		fila.ini = fila.ini->prox;
+		f2 = f2->prox;
+	}
+
+	return 1;
+}
+//***********************************************************************
+
+int main() {
+	struct tDescritorLilo l1; //fila
+	struct tChar *no, *f1; // pilha
+	char s1[] = "senha", s2[20];    // senha de acesso ( pode ser mudada)
+	int i,tamanhoS1, tamanhoS2, acesso;
+
+	inicializarLilo(&l1);
+	inicializarFilo(&f1);
+
+	tamanhoS1 = strlen(s1);
+// fila
+	for(i = 0; i < tamanhoS1; i++) {
+		no = malloc(sizeof(struct tChar));
+		no->caracter = s1[i];
+		enque(&l1, no);
+	}
+
+	//listar(l1);
+
+	printf("Digite a senha: ");
+	gets(s2);
+
+	tamanhoS2 = strlen(s2);
+// pilha
+	for(i = 0; i < tamanhoS2; i++) {
+		no = malloc(sizeof(struct tChar));
+		no->caracter = s2[i];
+		push(&f1, no);
+	}
+
+	//listarPilha(f1);
+
+	acesso = permitido(l1, f1);
+	
+	if(acesso == 1){
+		printf("Acesso permitodo\n");
+	}else{
+		printf("Senha errada\n");
+	}
+	
+	return 0;
+}
+
+
+void inicializarLilo(struct tDescritorLilo *fila) {
+	fila->ini = NULL;
+	fila->fim = NULL;
+}
+
+void inicializarFilo(struct tChar **topo) {
+	(*topo) = NULL;
+}
+
+void enque(struct tDescritorLilo *descritor, struct tChar *novo) {
+
+	if((*descritor).ini == NULL) { // vazio
+		(*descritor).ini = (*descritor).fim = novo;
+		novo->prox = NULL;
+	} else {
+		(*descritor).fim->prox = novo;
+		novo->prox = NULL;
+		(*descritor).fim = novo;
+	}
+
+}
+
+void listar(struct tDescritorLilo fila) {
+	struct tChar *p = fila.ini;
+
+	while(p != NULL) {
+		printf("%c", p->caracter);
+		p = p->prox;
+	}
+
+}
+
+void listarPilha(struct tChar *topo) {
+	struct tChar *p = topo;
+
+	while(p != NULL) {
+		printf("%c", p->caracter);
+		p = p->prox;
+	}
+}
+
+void push(struct tChar **topo, struct tChar *novo) {
+	novo->prox = (*topo);
+	(*topo) = novo;
+}
+
